@@ -112,8 +112,8 @@ chmod 0644, $COMPRESS_FILE;
 
 ### done setting up environment ###
 
-### check for zlib/bzip2 support
-{   for my $meth ( qw[has_zlib_support has_bzip2_support] ) {
+### check for zlib/bzip2/xz support
+{   for my $meth ( qw[has_zlib_support has_bzip2_support has_xz_support] ) {
         can_ok( $Class, $meth );
     }
 }
@@ -795,6 +795,12 @@ sub slurp_compressed_file {
         require IO::Uncompress::Bunzip2;
         $fh = IO::Uncompress::Bunzip2->new( $file )
             or warn( "Error opening '$file' with IO::Uncompress::Bunzip2" ), return
+
+    ### xz
+    } elsif( $file =~ /.txz$/ ) {
+        require IO::Uncompress::UnXz;
+        $fh = IO::Uncompress::UnXz->new( $file )
+            or warn( "Error opening '$file' with IO::Uncompress::UnXz" ), return
 
     ### gzip
     } else {
